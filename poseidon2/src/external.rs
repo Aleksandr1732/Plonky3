@@ -224,11 +224,10 @@ impl<T, const WIDTH: usize> ExternalLayerConstants<T, WIDTH> {
         [initial, terminal]: [[[U; WIDTH]; N]; 2],
         conversion_fn: fn([U; WIDTH]) -> [T; WIDTH],
     ) -> Self
-    where
-        T: Clone,
     {
-        let initial_consts = initial.map(conversion_fn).to_vec();
-        let terminal_consts = terminal.map(conversion_fn).to_vec();
+        // Convert arrays into Vec without cloning.
+        let initial_consts: Vec<[T; WIDTH]> = initial.map(conversion_fn).into();
+        let terminal_consts: Vec<[T; WIDTH]> = terminal.map(conversion_fn).into();
         Self::new(initial_consts, terminal_consts)
     }
 
