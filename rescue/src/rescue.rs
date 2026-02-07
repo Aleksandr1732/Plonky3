@@ -100,11 +100,14 @@ where
             .chunks(bytes_per_constant)
             .into_iter()
             .map(|chunk| {
-                let integer = chunk
-                    .collect_vec()
-                    .iter()
-                    .rev()
-                    .fold(0, |acc, &byte| (acc << 8) + *byte as u64);
+                let mut integer = 0u64;
+                let mut shift = 0u32;
+                for byte in chunk {
+                    if shift < 64 {
+                        integer |= (*byte as u64) << shift;
+                    }
+                    shift += 8;
+                }
                 F::from_u64(integer)
             })
             .collect()
